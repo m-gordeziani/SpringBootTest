@@ -1,19 +1,130 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head></head>
+<head>
+    <title>
+        Home
+    </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .add-form, .edit-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: wheat;
+            padding: 50px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
 <body>
-<header></header>
-<!-- Page content goes here -->
-<div class="container">
-    <div class="jumbotron">
-        <h1 class="display-4">Hello, Spring Boot Security!</h1>
-        <p class="lead">This is the home page of our web application. Anyone can access it, even if they have not signed in.</p>
-        <hr class="my-4">
-        <p>Using this example, you will become more familiar with Spring Security concepts:)</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="https://spring.io/projects/spring-security" role="button">Learn more about Spring Security</a>
-        </p>
+
+    <!-- Adding new product -->
+    <!--  Accessible for admins  -->
+    <div class="new-product">
+        <button class="add-btn">
+            Add new Product
+        </button>
+        <div class="new-form">
+            <form th:action="@{/products/add}" class="add-form hidden" method="post" enctype="multipart/form-data">
+                <h2>Add new product</h2>
+
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name"
+                       placeholder="Name">
+                <br>
+                <br>
+
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity"
+                       placeholder="Quantity">
+                <br>
+                <br>
+
+                <label for="price">Price</label>
+                <input type="text" id="price" name="price"
+                       placeholder="Price">
+                <br>
+                <br>
+
+                <label for="img">Image</label>
+                <input type="file" id="img" name="img" accept="image/png, image/jpeg, image/jpg">
+                <br>
+                <br>
+
+                <input type="submit" value="Add">
+                <button class="cancel-btn" type="button">Cancel </button>
+            </form>
+        </div>
     </div>
-</div>
+
+    <!--  Listing existing products  -->
+    <div>
+        <div th:each="product : ${products}" th:data="${product.getId()}"
+             style="border: 2px solid; padding: 20px; width: 50%; margin: 20px auto;">
+            <h3 th:text="${product.getName()}"></h3>
+            <img th:src="@{'/products/' + ${product.getImg()}}" width="400"/>
+            <div>Price: <span th:text="${product.getPrice() + '$'}"></span></div>
+            <div>Quantity: <span th:text="${product.getQuantity()}"></span></div>
+
+            <!--  Edit product button -->
+            <!--  Accessible for admins  -->
+            <button class="edit-product" th:data="${product.getId()}">
+                Edit
+            </button>
+        </div>
+    </div>
+
+    <!--  Edit product container  -->
+    <!--  Accessible for admins  -->
+    <div class="edit-product-container">
+
+    </div>
+
+
+    <!--  Admin scripts  -->
+    <script>
+        $(document).ready(function(){
+            $(".add-btn").click(function(){
+                $(".add-form").removeClass("hidden");
+            });
+
+            $(".cancel-btn").click(function () {
+                $(".add-form").addClass("hidden");
+                $('.add-form input:not([type="submit"])').val('');
+            });
+
+            $(".edit-product").click(function () {
+                $(".edit-product-container").html('' +
+                    ' <form action="/products/update" method="post" class="edit-form">' +
+                    '        <h2>Edit product</h2>' +
+                    '        <input type="text" name="id" value="'+ this.getAttribute("data") + '">' +
+                    '' +
+                    '        <label for="name">Name</label>' +
+                    '        <input type="text" name="name" placeholder="Name">' +
+                    '        <br>' +
+                    '        <br>' +
+                    '' +
+                    '        <label for="quantity">Quantity</label>' +
+                    '        <input type="number" name="quantity" placeholder="Quantity">' +
+                    '        <br>' +
+                    '        <br>' +
+                    '' +
+                    '        <label for="price">Price</label>' +
+                    '        <input type="text" name="price" placeholder="Price">' +
+                    '        <br>' +
+                    '        <br>' +
+                    '' +
+                    '        <input type="submit" value="Update">' +
+                    '' +
+                    '    </form>');
+            });
+        });
+    </script>
+
+
 </body>
 </html>
