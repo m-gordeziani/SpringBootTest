@@ -8,7 +8,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -26,7 +26,7 @@ public class User {
 
     protected User(){}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -42,7 +42,7 @@ public class User {
         return role;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

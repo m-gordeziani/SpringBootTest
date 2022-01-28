@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>
         Home
@@ -24,7 +24,7 @@
 
     <!-- Adding new product -->
     <!--  Accessible for admins  -->
-    <div class="new-product">
+    <div class="new-product" sec:authorize="hasRole('ADMIN')">
         <button class="add-btn">
             Add new Product
         </button>
@@ -72,7 +72,7 @@
 
             <!--  Edit product button -->
             <!--  Accessible for admins  -->
-            <button class="edit-product" th:data="${product.getId()}">
+            <button class="edit-product" th:data="${product.getId()}" sec:authorize="hasRole('ADMIN')">
                 Edit
             </button>
         </div>
@@ -80,13 +80,13 @@
 
     <!--  Edit product container  -->
     <!--  Accessible for admins  -->
-    <div class="edit-product-container">
+    <div class="edit-product-container" sec:authorize="hasRole('ADMIN')">
 
     </div>
 
 
     <!--  Admin scripts  -->
-    <script>
+    <script sec:authorize="hasRole('ADMIN')">
         $(document).ready(function(){
             $(".add-btn").click(function(){
                 $(".add-form").removeClass("hidden");
@@ -99,9 +99,9 @@
 
             $(".edit-product").click(function () {
                 $(".edit-product-container").html('' +
-                    ' <form action="/products/update" method="post" class="edit-form">' +
+                    ' <form action="/products/update" method="get" class="edit-form">' +
                     '        <h2>Edit product</h2>' +
-                    '        <input type="text" name="id" value="'+ this.getAttribute("data") + '">' +
+                    '        <input type="hidden" name="id" value="'+ this.getAttribute("data") + '">' +
                     '' +
                     '        <label for="name">Name</label>' +
                     '        <input type="text" name="name" placeholder="Name">' +
