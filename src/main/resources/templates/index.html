@@ -22,6 +22,12 @@
 </head>
 <body>
 
+    <!--  Logout if authenticated  -->
+    <a th:href="@{/logout}" sec:authorize="isAuthenticated()">
+        Logout
+    </a>
+    <br><br>
+
     <!-- Adding new product -->
     <!--  Accessible for admins  -->
     <div class="new-product" sec:authorize="hasRole('ADMIN')">
