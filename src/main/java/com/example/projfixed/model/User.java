@@ -1,7 +1,10 @@
 package com.example.projfixed.model;
 
+import net.bytebuddy.utility.RandomString;
+
 import javax.persistence.*;
 import java.security.SecureRandom;
+import java.util.UUID;
 
 @Entity
 @Table (name = "users")
@@ -23,11 +26,11 @@ public class User {
 
     private String token;
 
-    private String generateToken() {
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[254];
-        random.nextBytes(bytes);
-        return bytes.toString();
+    private String forgotPasswordToken;
+
+    public static String generateToken() {
+        return UUID.randomUUID().toString() +
+                UUID.randomUUID().toString();
     }
 
     public User(String email, String password) {
@@ -35,7 +38,7 @@ public class User {
         this.password = password;
         this.role = "USER";
         this.active = false;
-        this.token = this.generateToken();
+        this.token = generateToken();
     }
 
     public User(String email, String password, String role, Boolean active){
@@ -45,7 +48,7 @@ public class User {
         this.active = active;
     }
 
-    protected User(){}
+    public User(){}
 
     public Long getId() {
         return id;
@@ -93,5 +96,13 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getForgotPasswordToken() {
+        return forgotPasswordToken;
+    }
+
+    public void setForgotPasswordToken(String forgotPasswordToken) {
+        this.forgotPasswordToken = forgotPasswordToken;
     }
 }
