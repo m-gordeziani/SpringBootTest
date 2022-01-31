@@ -4,6 +4,7 @@ import net.bytebuddy.utility.RandomString;
 
 import javax.persistence.*;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +28,8 @@ public class User {
     private String token;
 
     private String forgotPasswordToken;
+
+    private Date forgotPasswordDate;
 
     public static String generateToken() {
         return UUID.randomUUID().toString() +
@@ -104,5 +107,13 @@ public class User {
 
     public void setForgotPasswordToken(String forgotPasswordToken) {
         this.forgotPasswordToken = forgotPasswordToken;
+    }
+
+    public Date getForgotPasswordDate() {
+        return forgotPasswordDate;
+    }
+
+    public void setForgotPasswordDate(Date forgotPasswordDate) {
+        this.forgotPasswordDate = forgotPasswordDate;
     }
 }

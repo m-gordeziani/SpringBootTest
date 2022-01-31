@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
+import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -38,6 +39,7 @@ public class ForgotPasswordController {
         }
         String forgotPasswordToken = User.generateToken();
         u.setForgotPasswordToken(forgotPasswordToken);
+        u.setForgotPasswordDate(new Date());
         this.userRepository.save(u);
 
         String HOST = request.getServerName();
@@ -52,7 +54,15 @@ public class ForgotPasswordController {
     public String recoverPassword(@PathVariable String token, Model model) {
         User u = this.userRepository.findByForgotPasswordToken(token);
         if(u == null) {
-            return "redirect:/";
+            model.addAttribute("err", "User not found");
+        }
+        if(u != null) {
+            Date currentDate = new Date();
+            long secs = (currentDate.getTime() - u.getForgotPasswordDate().getTime()) / 1000;
+            int hours = (int)(secs / 3600);
+            if(hours > 0) {
+                model.addAttribute("err", "Token expired");
+            }
         }
         model.addAttribute("user", u);
         return "recover_password";
@@ -63,7 +73,16 @@ public class ForgotPasswordController {
     public String recoverPassword(@RequestParam Long id, @RequestParam String password) {
         Optional<User> uOpt = this.userRepository.findById(id);
         if(uOpt.isEmpty()) return "User not found";
+
         User u = uOpt.get();
+        Date currentDate = new Date();
+        long secs = (currentDate.getTime() - u.getForgotPasswordDate().getTime()) / 1000;
+        int hours = (int)(secs / 3600);
+        if(hours > 0) return "token expired";
+
+
+        u.setForgotPasswordDate(null);
+        u.setForgotPasswordToken(null);
         u.setPassword(this.passwordEncoder.encode(password));
         this.userRepository.save(u);
         return "Password has been recovered";
