@@ -70,11 +70,10 @@ public class ForgotPasswordController {
 
     @PostMapping("recover_password")
     @ResponseBody
-    public String recoverPassword(@RequestParam Long id, @RequestParam String password) {
-        Optional<User> uOpt = this.userRepository.findById(id);
-        if(uOpt.isEmpty()) return "User not found";
+    public String recoverPassword(@RequestParam String forgotPasswordToken, @RequestParam String password) {
+        User u = this.userRepository.findByForgotPasswordToken(forgotPasswordToken);
+        if(u == null) return "User not found";
 
-        User u = uOpt.get();
         Date currentDate = new Date();
         long secs = (currentDate.getTime() - u.getForgotPasswordDate().getTime()) / 1000;
         int hours = (int)(secs / 3600);

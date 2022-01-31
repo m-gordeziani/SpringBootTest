@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,8 +25,11 @@ public class DbInit implements CommandLineRunner {
     public void run(String... args) {
 
         User user = new User("user",passwordEncoder.encode("user123"),"USER", true);
-        User mg = new User("mgord17@freeuni.edu.ge",passwordEncoder.encode("123"),"USER", true);
         User admin = new User("admin",passwordEncoder.encode("admin123"),"ADMIN", true);
+
+        User mg = new User("mgord17@freeuni.edu.ge",passwordEncoder.encode("123"),"USER", true);
+        mg.setForgotPasswordToken("mg");
+        mg.setForgotPasswordDate(new Date());
 
         List<User> users = Arrays.asList(user,admin, mg);
         this.userRepository.saveAll(users);
