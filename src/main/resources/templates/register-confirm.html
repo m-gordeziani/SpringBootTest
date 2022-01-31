@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm registration</title>
+</head>
+<body>
+<form th:action="@{/register/confirm}" method="post" th:if="${user != null}">
+    <input type="hidden" th:value="${user.getId()}" name="id">
+    <label for="token">Token: </label>
+    <input type="text" name="token" id="token">
+    <input type="submit">
+</form>
+<p>You should receive token by email</p>
+</body>
+</html>
