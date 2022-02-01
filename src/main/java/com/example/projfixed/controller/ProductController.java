@@ -22,6 +22,7 @@ public class ProductController {
     private ProductRepository productRepository;
 
     private final String pathToProductImages = System.getProperty("user.dir")+"/src/main/resources/static/products/";
+    private final String pathToCompiledProductImages = System.getProperty("user.dir")+"/target/classes/static/products/";
 
     @PostMapping("products/add")
     public String addNewProduct(@RequestParam String name,
@@ -34,7 +35,9 @@ public class ProductController {
 
             byte[] bytes = img.getBytes();
             Path path = Paths.get(this.pathToProductImages + img.getOriginalFilename());
+            Path pathCompiled = Paths.get(this.pathToCompiledProductImages + img.getOriginalFilename());
             Files.write(path, bytes);
+            Files.write(pathCompiled, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
