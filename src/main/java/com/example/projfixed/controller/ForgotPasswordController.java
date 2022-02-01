@@ -3,6 +3,7 @@ package com.example.projfixed.controller;
 import com.example.projfixed.db.UserRepository;
 import com.example.projfixed.model.User;
 import com.example.projfixed.service.EmailService;
+import com.example.projfixed.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class ForgotPasswordController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private EmailService emailService;
@@ -33,14 +34,14 @@ public class ForgotPasswordController {
     @PostMapping("forgot_password")
     @ResponseBody
     public String forgotPasswordHandler(ServletRequest request, @RequestParam String email) {
-        User u = this.userRepository.findByEmail(email);
+        User u = this.userService.findByEmail(email);
         if(u == null) {
             return "no user found with current email: " + email;
         }
         String forgotPasswordToken = User.generateToken();
         u.setForgotPasswordToken(forgotPasswordToken);
         u.setForgotPasswordDate(new Date());
-        this.userRepository.save(u);
+        this.userService.save(u);
 
         String HOST = request.getServerName();
         int PORT = request.getServerPort();
@@ -52,7 +53,7 @@ public class ForgotPasswordController {
 
     @GetMapping("/recover_password/{token}")
     public String recoverPassword(@PathVariable String token, Model model) {
-        User u = this.userRepository.findByForgotPasswordToken(token);
+        User u = this.userService.findByForgotPasswordToken(token);
         if(u == null) {
             model.addAttribute("err", "User not found");
         }
@@ -71,7 +72,7 @@ public class ForgotPasswordController {
     @PostMapping("recover_password")
     @ResponseBody
     public String recoverPassword(@RequestParam String forgotPasswordToken, @RequestParam String password) {
-        User u = this.userRepository.findByForgotPasswordToken(forgotPasswordToken);
+        User u = this.userService.findByForgotPasswordToken(forgotPasswordToken);
         if(u == null) return "User not found";
 
         Date currentDate = new Date();
@@ -83,7 +84,7 @@ public class ForgotPasswordController {
         u.setForgotPasswordDate(null);
         u.setForgotPasswordToken(null);
         u.setPassword(this.passwordEncoder.encode(password));
-        this.userRepository.save(u);
+        this.userService.save(u);
         return "Password has been recovered";
     }
 }

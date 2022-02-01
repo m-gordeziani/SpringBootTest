@@ -1,8 +1,8 @@
 package com.example.projfixed.controller;
 
-import com.example.projfixed.db.UserRepository;
 import com.example.projfixed.model.User;
 import com.example.projfixed.service.EmailService;
+import com.example.projfixed.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @Controller
 public class UserController {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,7 +48,7 @@ public class UserController {
                                   Model model) {
         User newUser = new User(email, passwordEncoder.encode(password));
         this.emailService.sendMail(newUser.getEmail(), "Confirm Email with token", newUser.getToken());
-        this.userRepository.save(newUser);
+        this.userService.save(newUser);
         model.addAttribute("user", newUser);
 
         return "register-confirm";
@@ -57,13 +57,13 @@ public class UserController {
     @PostMapping("register/confirm")
     public String registerHandler(@RequestParam Long id,
                                   @RequestParam String token) {
-        Optional<User> uOpt = this.userRepository.findById(id);
+        Optional<User> uOpt = this.userService.findById(id);
         if(uOpt.isEmpty()) return "redirect:/";
         User u = uOpt.get();
         if(token.equals(u.getToken())) {
             u.setToken(null);
             u.setActive(true);
-            this.userRepository.save(u);
+            this.userService.save(u);
         }
         return "redirect:/";
     }

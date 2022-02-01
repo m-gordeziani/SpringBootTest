@@ -1,12 +1,13 @@
 package com.example.projfixed.controller;
 
 import com.example.projfixed.db.OrderRepository;
-import com.example.projfixed.db.ProductRepository;
 import com.example.projfixed.db.UserRepository;
 import com.example.projfixed.model.Order;
 import com.example.projfixed.model.Product;
 import com.example.projfixed.model.User;
-import org.aspectj.weaver.ast.Or;
+import com.example.projfixed.service.OrderService;
+import com.example.projfixed.service.ProductService;
+import com.example.projfixed.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -27,13 +28,13 @@ import java.util.Optional;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     private final String pathToProductImages = System.getProperty("user.dir")+"/src/main/resources/static/products/";
     private final String pathToCompiledProductImages = System.getProperty("user.dir")+"/target/classes/static/products/";
@@ -56,7 +57,7 @@ public class ProductController {
             e.printStackTrace();
         }
         Product newProduct = new Product(name, quantity, price, img.getOriginalFilename());
-        this.productRepository.save(newProduct);
+        this.productService.save(newProduct);
         return "redirect:/";
     }
 
@@ -67,7 +68,7 @@ public class ProductController {
             @RequestParam(required = false) Integer quantity,
             @RequestParam(required = false) Double price
     ){
-        Optional<Product> pOpt = this.productRepository.findById(id);
+        Optional<Product> pOpt = this.productService.findById(id);
         if(pOpt.isEmpty()) return "redirect:/";
         Product p = pOpt.get();
         if(name != null && !name.isEmpty()) {
@@ -79,7 +80,7 @@ public class ProductController {
         if(price != null) {
             p.setPrice(price);
         }
-        this.productRepository.save(p);
+        this.productService.save(p);
         return "redirect:/";
     }
 
@@ -91,8 +92,8 @@ public class ProductController {
             Authentication authentication
     ){
         String email = authentication.getName();
-        User currentUser = this.userRepository.findByEmail(email);
-        Optional<Product> productOpt = this.productRepository.findById(id);
+        User currentUser = this.userService.findByEmail(email);
+        Optional<Product> productOpt = this.productService.findById(id);
         if(productOpt.isEmpty()) return null;
 
         Product product = productOpt.get();
@@ -101,16 +102,16 @@ public class ProductController {
         if(currentUser.getMoney() < cost) return null;
 
         product.setQuantity(product.getQuantity() - quantity);
-        this.productRepository.save(product);
+        this.productService.save(product);
 
         currentUser.setMoney(currentUser.getMoney() - cost);
-        this.userRepository.save(currentUser);
+        this.userService.save(currentUser);
 
-        User admin = this.userRepository.findByRole("ADMIN");
+        User admin = this.userService.findByRole("ADMIN");
         admin.setMoney(admin.getMoney() + cost);
-        this.userRepository.save(admin);
+        this.userService.save(admin);
 
         Order order = new Order(currentUser, product, quantity, new Date());
-        return this.orderRepository.save(order);
+        return this.orderService.save(order);
     }
 }
