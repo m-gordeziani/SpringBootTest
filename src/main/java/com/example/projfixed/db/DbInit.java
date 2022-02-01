@@ -27,11 +27,7 @@ public class DbInit implements CommandLineRunner {
         User user = new User("user",passwordEncoder.encode("user123"),"USER", true);
         User admin = new User("admin",passwordEncoder.encode("admin123"),"ADMIN", true);
 
-        User mg = new User("mgord17@freeuni.edu.ge",passwordEncoder.encode("123"),"USER", true);
-        mg.setForgotPasswordToken("mg");
-        mg.setForgotPasswordDate(new Date());
-
-        List<User> users = Arrays.asList(user,admin, mg);
+        List<User> users = Arrays.asList(user,admin);
         this.userRepository.saveAll(users);
 
         Product p1 = new Product("hat", 20, 59.99, "hat-black.jpg");
