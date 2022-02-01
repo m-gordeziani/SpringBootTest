@@ -6,7 +6,7 @@
     </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
-        .add-form, .edit-form {
+        .add-form, .edit-form, .buy-product-container form {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -18,6 +18,7 @@
         .hidden {
             display: none;
         }
+
     </style>
 </head>
 <body>
@@ -81,6 +82,12 @@
             <button class="edit-product" th:data="${product.getId()}" sec:authorize="hasRole('ADMIN')">
                 Edit
             </button>
+
+            <!--  Buy product  -->
+            <!--  Accessible for users  -->
+            <button class="buy-product" th:data="${product.getId()}" sec:authorize="hasRole('USER')">
+                Buy
+            </button>
         </div>
     </div>
 
@@ -89,6 +96,40 @@
     <div class="edit-product-container" sec:authorize="hasRole('ADMIN')">
 
     </div>
+
+    <!--  Buy product container  -->
+    <!--  Accessible for users  -->
+    <div class="buy-product-container" sec:authorize="hasRole('USER')">
+
+    </div>
+
+
+
+    <!--  User scripts  -->
+    <script sec:authorize="hasRole('USER')">
+        $(document).ready(function () {
+            $(".buy-product").click(function () {
+
+                $(".buy-product-container").html(`
+                <form action="/products/buy" method="get">
+                    <h3> Buy Product </h3>
+                    <input type="hidden" value="${this.getAttribute("data")}" name="id">
+                    <label for="buy-quantity">Quantity</label>
+                    <input type="number" name="quantity" id="buy-quantity">
+                    <br>
+                    <br>
+                    <input type="submit">
+                    <button type="button" class="cancel-buy-btn">
+                        Cancel
+                    </button>
+                </form>`
+                );
+                $(".cancel-buy-btn").click(function() {
+                    $(".buy-product-container").html("");
+                });
+            });
+        });
+    </script>
 
 
     <!--  Admin scripts  -->
@@ -130,6 +171,7 @@
             });
         });
     </script>
+
 
 
 </body>

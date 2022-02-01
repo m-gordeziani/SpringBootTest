@@ -21,6 +21,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private Double money;
+
     private String role;
 
     private Boolean active;
@@ -42,6 +44,7 @@ public class User {
         this.role = "USER";
         this.active = false;
         this.token = generateToken();
+        this.money = 0d;
     }
 
     public User(String email, String password, String role, Boolean active){
@@ -49,6 +52,7 @@ public class User {
         this.password = password;
         this.role = role;
         this.active = active;
+        this.money = 0d;
     }
 
     public User(){}
@@ -115,5 +119,13 @@ public class User {
 
     public void setForgotPasswordDate(Date forgotPasswordDate) {
         this.forgotPasswordDate = forgotPasswordDate;
+    }
+
+    public Double getMoney() {
+        return money;
+    }
+
+    public void setMoney(Double money) {
+        this.money = money;
     }
 }

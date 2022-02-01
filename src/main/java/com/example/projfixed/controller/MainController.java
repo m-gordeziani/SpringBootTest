@@ -5,6 +5,7 @@ import com.example.projfixed.db.UserRepository;
 import com.example.projfixed.model.Product;
 import com.example.projfixed.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +29,11 @@ public class MainController {
     private ProductRepository productRepository;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model, Authentication authentication){
         List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
+        String nm = authentication.getName();
+//        User currentUser = (User) authentication.getPrincipal();
         return "index";
     }
 
