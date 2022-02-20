@@ -1,6 +1,5 @@
 package com.example.projfixed.controller;
 
-import com.example.projfixed.db.ProductRepository;
 import com.example.projfixed.model.Product;
 import com.example.projfixed.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +21,4 @@ public class MainController {
         model.addAttribute("products", products);
         return "index";
     }
-
 }
